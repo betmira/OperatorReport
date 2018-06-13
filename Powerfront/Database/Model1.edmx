@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="chatModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Conversation">
+          <Key>
+            <PropertyRef Name="ConversationID" />
+          </Key>
+          <Property Name="ConversationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VisitorID" Type="int" />
+          <Property Name="OperatorID" Type="int" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="Website" Type="varchar" MaxLength="100" />
+          <Property Name="PageName" Type="varchar" MaxLength="100" />
+          <Property Name="PageURL" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Messages">
+          <Key>
+            <PropertyRef Name="MessageID" />
+          </Key>
+          <Property Name="MessageID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ConversationID" Type="int" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="MessageFrom" Type="varchar" MaxLength="10" />
+          <Property Name="MessageUserID" Type="int" />
+          <Property Name="MessageDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Operator">
+          <Key>
+            <PropertyRef Name="OperatorID" />
+          </Key>
+          <Property Name="OperatorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="1000" />
+          <Property Name="Email" Type="varchar" MaxLength="1000" />
+          <Property Name="Phone" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="Visitor">
+          <Key>
+            <PropertyRef Name="VisitorID" />
+          </Key>
+          <Property Name="VisitorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="1000" />
+          <Property Name="Email" Type="varchar" MaxLength="1000" />
+          <Property Name="Phone" Type="varchar" MaxLength="500" />
+          <Property Name="Browser" Type="varchar" MaxLength="900" />
+          <Property Name="Device" Type="varchar" MaxLength="980" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="890" />
+        </EntityType>
+        <Association Name="FK_Conversation_Message">
+          <End Role="Conversation" Type="Self.Conversation" Multiplicity="0..1" />
+          <End Role="Messages" Type="Self.Messages" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Conversation">
+              <PropertyRef Name="ConversationID" />
+            </Principal>
+            <Dependent Role="Messages">
+              <PropertyRef Name="ConversationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operator_Conversation">
+          <End Role="Operator" Type="Self.Operator" Multiplicity="0..1" />
+          <End Role="Conversation" Type="Self.Conversation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operator">
+              <PropertyRef Name="OperatorID" />
+            </Principal>
+            <Dependent Role="Conversation">
+              <PropertyRef Name="OperatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Visitor_Conversation">
+          <End Role="Visitor" Type="Self.Visitor" Multiplicity="0..1" />
+          <End Role="Conversation" Type="Self.Conversation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Visitor">
+              <PropertyRef Name="VisitorID" />
+            </Principal>
+            <Dependent Role="Conversation">
+              <PropertyRef Name="VisitorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="OperatorProductivity" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Website" Type="varchar" Mode="In" />
+          <Parameter Name="VisitorID" Type="int" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+        </Function>
+        <EntityContainer Name="chatModelStoreContainer">
+          <EntitySet Name="Conversation" EntityType="Self.Conversation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Messages" EntityType="Self.Messages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Operator" EntityType="Self.Operator" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Visitor" EntityType="Self.Visitor" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Conversation_Message" Association="Self.FK_Conversation_Message">
+            <End Role="Conversation" EntitySet="Conversation" />
+            <End Role="Messages" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operator_Conversation" Association="Self.FK_Operator_Conversation">
+            <End Role="Operator" EntitySet="Operator" />
+            <End Role="Conversation" EntitySet="Conversation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Visitor_Conversation" Association="Self.FK_Visitor_Conversation">
+            <End Role="Visitor" EntitySet="Visitor" />
+            <End Role="Conversation" EntitySet="Conversation" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="chatModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Conversation">
+          <Key>
+            <PropertyRef Name="ConversationID" />
+          </Key>
+          <Property Name="ConversationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VisitorID" Type="Int32" />
+          <Property Name="OperatorID" Type="Int32" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="Website" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PageName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PageURL" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Visitor" Relationship="chatModel.FK_Visitor_Conversation" FromRole="Conversation" ToRole="Visitor" />
+          <NavigationProperty Name="Operator" Relationship="chatModel.FK_Operator_Conversation" FromRole="Conversation" ToRole="Operator" />
+          <NavigationProperty Name="Messages" Relationship="chatModel.FK_Conversation_Message" FromRole="Conversation" ToRole="Messages" />
+        </EntityType>
+        <EntityType Name="Messages">
+          <Key>
+            <PropertyRef Name="MessageID" />
+          </Key>
+          <Property Name="MessageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ConversationID" Type="Int32" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MessageFrom" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="MessageUserID" Type="Int32" />
+          <Property Name="MessageDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Conversation" Relationship="chatModel.FK_Conversation_Message" FromRole="Messages" ToRole="Conversation" />
+        </EntityType>
+        <EntityType Name="Operator">
+          <Key>
+            <PropertyRef Name="OperatorID" />
+          </Key>
+          <Property Name="OperatorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Conversation" Relationship="chatModel.FK_Operator_Conversation" FromRole="Operator" ToRole="Conversation" />
+        </EntityType>
+        <EntityType Name="Visitor">
+          <Key>
+            <PropertyRef Name="VisitorID" />
+          </Key>
+          <Property Name="VisitorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Browser" Type="String" MaxLength="900" FixedLength="false" Unicode="false" />
+          <Property Name="Device" Type="String" MaxLength="980" FixedLength="false" Unicode="false" />
+          <Property Name="IPAddress" Type="String" MaxLength="890" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Conversation" Relationship="chatModel.FK_Visitor_Conversation" FromRole="Visitor" ToRole="Conversation" />
+        </EntityType>
+        <EntityContainer Name="chatEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Conversation" EntityType="Self.Conversation" />
+          <EntitySet Name="Messages" EntityType="Self.Messages" />
+          <EntitySet Name="Operator" EntityType="Self.Operator" />
+          <EntitySet Name="Visitor" EntityType="Self.Visitor" />
+          <FunctionImport Name="OperatorProductivity" ReturnType="Collection(chatModel.OperatorProductivity_Result)" >
+            <Parameter Name="Website" Mode="In" Type="String" />
+            <Parameter Name="VisitorID" Mode="In" Type="Int32" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <AssociationSet Name="FK_Visitor_Conversation" Association="chatModel.FK_Visitor_Conversation">
+            <End Role="Visitor" EntitySet="Visitor" />
+            <End Role="Conversation" EntitySet="Conversation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Operator_Conversation" Association="chatModel.FK_Operator_Conversation">
+            <End Role="Operator" EntitySet="Operator" />
+            <End Role="Conversation" EntitySet="Conversation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Conversation_Message" Association="chatModel.FK_Conversation_Message">
+            <End Role="Conversation" EntitySet="Conversation" />
+            <End Role="Messages" EntitySet="Messages" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="OperatorProductivity_Result">
+          <Property Type="Int32" Name="OperatorID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="ProactiveSent" Nullable="true" />
+          <Property Type="Int32" Name="ProactiveAnswered" Nullable="true" />
+          <Property Type="Int32" Name="ProactiveResponseRate" Nullable="true" />
+          <Property Type="Int32" Name="ReactiveReceived" Nullable="true" />
+          <Property Type="Int32" Name="ReactiveAnswered" Nullable="true" />
+          <Property Type="Int32" Name="ReactiveResponseRate" Nullable="true" />
+          <Property Type="Int32" Name="TotalChatLength" Nullable="true" />
+          <Property Type="Int32" Name="AverageChatLength" Nullable="true" />
+        </ComplexType>
+        <Association Name="FK_Visitor_Conversation">
+          <End Type="chatModel.Visitor" Role="Visitor" Multiplicity="0..1" />
+          <End Type="chatModel.Conversation" Role="Conversation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Visitor">
+              <PropertyRef Name="VisitorID" />
+            </Principal>
+            <Dependent Role="Conversation">
+              <PropertyRef Name="VisitorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Operator_Conversation">
+          <End Type="chatModel.Operator" Role="Operator" Multiplicity="0..1" />
+          <End Type="chatModel.Conversation" Role="Conversation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Operator">
+              <PropertyRef Name="OperatorID" />
+            </Principal>
+            <Dependent Role="Conversation">
+              <PropertyRef Name="OperatorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Conversation_Message">
+          <End Type="chatModel.Conversation" Role="Conversation" Multiplicity="0..1" />
+          <End Type="chatModel.Messages" Role="Messages" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Conversation">
+              <PropertyRef Name="ConversationID" />
+            </Principal>
+            <Dependent Role="Messages">
+              <PropertyRef Name="ConversationID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="chatModelStoreContainer" CdmEntityContainer="chatEntities">
+          <EntitySetMapping Name="Conversation">
+            <EntityTypeMapping TypeName="chatModel.Conversation">
+              <MappingFragment StoreEntitySet="Conversation">
+                <ScalarProperty Name="ConversationID" ColumnName="ConversationID" />
+                <ScalarProperty Name="VisitorID" ColumnName="VisitorID" />
+                <ScalarProperty Name="OperatorID" ColumnName="OperatorID" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="Website" ColumnName="Website" />
+                <ScalarProperty Name="PageName" ColumnName="PageName" />
+                <ScalarProperty Name="PageURL" ColumnName="PageURL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Messages">
+            <EntityTypeMapping TypeName="chatModel.Messages">
+              <MappingFragment StoreEntitySet="Messages">
+                <ScalarProperty Name="MessageID" ColumnName="MessageID" />
+                <ScalarProperty Name="ConversationID" ColumnName="ConversationID" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="MessageFrom" ColumnName="MessageFrom" />
+                <ScalarProperty Name="MessageUserID" ColumnName="MessageUserID" />
+                <ScalarProperty Name="MessageDate" ColumnName="MessageDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Operator">
+            <EntityTypeMapping TypeName="chatModel.Operator">
+              <MappingFragment StoreEntitySet="Operator">
+                <ScalarProperty Name="OperatorID" ColumnName="OperatorID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Visitor">
+            <EntityTypeMapping TypeName="chatModel.Visitor">
+              <MappingFragment StoreEntitySet="Visitor">
+                <ScalarProperty Name="VisitorID" ColumnName="VisitorID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Browser" ColumnName="Browser" />
+                <ScalarProperty Name="Device" ColumnName="Device" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="OperatorProductivity" FunctionName="chatModel.Store.OperatorProductivity">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="chatModel.OperatorProductivity_Result">
+                <ScalarProperty Name="OperatorID" ColumnName="OperatorID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ProactiveSent" ColumnName="ProactiveSent" />
+                <ScalarProperty Name="ProactiveAnswered" ColumnName="ProactiveAnswered" />
+                <ScalarProperty Name="ProactiveResponseRate" ColumnName="ProactiveResponseRate" />
+                <ScalarProperty Name="ReactiveReceived" ColumnName="ReactiveReceived" />
+                <ScalarProperty Name="ReactiveAnswered" ColumnName="ReactiveAnswered" />
+                <ScalarProperty Name="ReactiveResponseRate" ColumnName="ReactiveResponseRate" />
+                <ScalarProperty Name="TotalChatLength" ColumnName="TotalChatLength" />
+                <ScalarProperty Name="AverageChatLength" ColumnName="AverageChatLength" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
